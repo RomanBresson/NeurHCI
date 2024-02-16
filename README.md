@@ -4,7 +4,7 @@ This repository is the official implementation of Neur-HCI as introduced in our 
 
 This is a reimplementation of the code used in those papers, and not the original code.
 
-For each class, a representation theorem is proven in the thesis, such that the search space exactly coïncides with the sought class.
+For each class, a representation theorem is provided and proven in the thesis, such that the search space exactly coincides with the sought class. All theoretical properties applicable to Choquet integrals are thus formally valid by design.
 
 ## Requirements
 
@@ -35,6 +35,8 @@ import neurhci
 ```
 
 ### Submodules
+
+The classes detailed here, module by module, either inherit from PyTorch's ``nn.Module``, and can thus be used like any basic module.
 
 * ``marginal_utilities``: classes implementing marginal utilities. Each class has a short string identifier (used as a keyword for easier implementation). We give below each classe's constructor, along with its identifier:
   * ``"UId": Identity()``: $u(x) = x$
