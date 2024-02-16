@@ -40,6 +40,9 @@ class HCI(nn.Module):
                 
                 {-1:[4,5], 4:[0,1,5], 5:[2,3,4]} represents a graph with a cycle (4 and 5 aggregate each other) and is
                 thus not valid.
+            
+            Input for batch size m is a tensor of shape (m, l), with l the number of leaves.
+            Output is of shape (m, r) with r the number of roots.
         """
         super(HCI, self).__init__()
         self.hierarchy = hierarchy

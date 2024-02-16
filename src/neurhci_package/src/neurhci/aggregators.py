@@ -4,7 +4,10 @@ import torch.nn.functional as F
 
 class CI2Add(nn.Module):
     """
-        A module representing a 2-additive Choquet integral
+        A module representing a 2-additive Choquet integral.
+
+        Input is a tensor of shape (m, d), with m the batch size and d the dimension.
+        Output is a tensor of shape (m, 1)
     """
     def __init__(self, dimension):
         """

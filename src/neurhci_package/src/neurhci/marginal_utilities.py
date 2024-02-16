@@ -2,6 +2,12 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+"""
+    All the below classes apart from MarginalUtilitiesLayer take as input a tensor of
+    shape (m, 1) with m the batch size.
+    It returns a tensor of shape (m,1)
+"""
+
 class Identity(nn.Module):
     def __init__(self, *args):
         super(Identity, self).__init__()
@@ -71,7 +77,17 @@ node_codes = {
 }
 
 class MarginalUtilitiesLayer(nn.ModuleList):
+    """
+        A list of marginal utilities.
+    """
     def __init__(self, list_of_leaves, types_of_nodes, nb_sigmoids):
+        """
+            list_of_leaves: a list of the integer ids of all the leaves.
+            types_of_nodes: the type of each leaf, as a dictionary {leaf id: node_code}.
+                                See node_codes in the above map.
+                                Any unspecified type will be set to "UId".
+            nb_sigmoids: the number of sigmoids to be used in the marginal utilities that require it.
+        """
         super(MarginalUtilitiesLayer, self).__init__()
         if types_of_nodes is None:
             types_of_nodes = {}

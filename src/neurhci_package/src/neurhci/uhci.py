@@ -3,6 +3,10 @@ from .hierarchical import HCI
 from .marginal_utilities import MarginalUtilitiesLayer
 
 class UHCI(nn.Module):
+    """
+        A utilitaristic hierarchical Choquet integral, combination of marginal utilities and a HCI.
+    """
+
     def __init__(self, **kwargs):
         """
             possible arguments:
