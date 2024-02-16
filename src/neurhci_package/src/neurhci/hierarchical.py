@@ -133,7 +133,7 @@ class HCI(nn.Module):
         #TODO
         ...
 
-class HCI_2_layers(HCI):
+class HCI2layers(HCI):
     """
         A tree-HCI with a single root and a single intermediate layer. 
         Each node in the intermediate layer has the same number of leaves (except the last one)
@@ -149,9 +149,9 @@ class HCI_2_layers(HCI):
         hierarchy = {starting_index_aggs+agg:list(range(agg*children_by_aggregators,min((agg+1)*children_by_aggregators, dimension))) 
                      for agg in range(nb_intermediate_nodes)}
         hierarchy[-1] = list(hierarchy.keys())
-        super(HCI_2_layers, self).__init__(hierarchy)
+        super(HCI2layers, self).__init__(hierarchy)
 
-class HCI_Balanced(HCI):
+class HCIBalanced(HCI):
     """
         A tree-HCI with a single root and where all aggregators have the same number of leaves 
         (except the last one at each level)
@@ -178,4 +178,4 @@ class HCI_Balanced(HCI):
             starting_index = max(current_layer)+1
             hierarchy = hierarchy|{starting_index+i: current_layer[::reverse][i*children_by_aggregators:(i+1)*children_by_aggregators] for i in range(next_layer_size)}
             next_layer = list(range(starting_index, starting_index+next_layer_size))
-        super(HCI_Balanced, self).__init__(hierarchy)
+        super(HCIBalanced, self).__init__(hierarchy)
