@@ -1,7 +1,7 @@
+import itertools
 import torch
 import torch.nn as nn
 from .aggregators import CI2Add
-import itertools
 
 class HCI(nn.Module):
     """
