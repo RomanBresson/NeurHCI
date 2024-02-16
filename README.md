@@ -47,7 +47,7 @@ The classes detailed here, module by module, either inherit from PyTorch's ``nn.
   * ``MarginalUtilitiesLayer(list_of_leaves, types_of_nodes, nb_sigmoids)``: a list of marginal utilities ${u_1,...,u_n}$ where $u_i$ corresponds to ``list_of_leaves[i]`` and has type ``types_of_nodes[list_of_leaves[i]]``. Any non-given type will be replaced by an ``Identity``.
 * ``aggregators``: classes implementing Choquet integral-based aggregators:
   * ``CI2Add``: The $2$-additive Choquet integral, with ``dimension`` inputs.
-* hierarchical: class of hierarchical Choquet integral, i.e. a multi-step aggregator which aggregates the inputs successively following a directed-acyclic graph structure. Contains the following classes:
+* ``hierarchical``: class of hierarchical Choquet integral, i.e. a multi-step aggregator which aggregates the inputs successively following a directed-acyclic graph structure. Contains the following classes:
   * ``HCI(hierarchy)``: builds a HCI with the structure passed as argument. ``hierarchy`` is a dict of {(int) key: (list of int) value} where key is the id of a node, and value is the list of this node's children. Details and examples can be found below.
   * ``HCI2layers(dimension, children_by_aggregators)``: A tree-HCI with a single root single intermediate layer, and ``dimension leaves``. Each node in the intermediate layer aggregates ``children_by_aggregators`` leaves (or fewer for the last one). The root aggregates all intermediate nodes
   * ``HCIBalanced(dimension, children_by_aggregators)``: A tree-HCI with a single root, ``dimension`` leaves, where all aggregators have the same number ``children_by_aggregators`` of leaves (except the first/last one at each level)
