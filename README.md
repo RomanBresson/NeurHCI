@@ -20,7 +20,7 @@ numpy==1.23.5
 
 Get the code with:
 ```
-git clone https://github.com/RomanBresson/NeurHCI
+git clone https://github.com/RomanBresson/NeurHCI.git
 ```
 
 The code is packaged to be installed through pip with:
