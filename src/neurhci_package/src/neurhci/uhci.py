@@ -1,6 +1,6 @@
 import torch.nn as nn
 from .hierarchical import HCI
-from .marginal_utilities import MarginalUtilitiesLayer
+from .marginal_utilities import MarginalUtilitiesLayer, Identity
 
 class UHCI(nn.Module):
     """
@@ -28,7 +28,7 @@ class UHCI(nn.Module):
             else:
                 type_of_leaves = kwargs['types_of_leaves']
         except:
-            type_of_leaves = {i:"UId" for i in self.HCI.leaves}
+            type_of_leaves = {i:Identity for i in self.HCI.leaves}
         self.marginal_utilities = MarginalUtilitiesLayer(self.HCI.leaves, type_of_leaves, nb_sigmoids)
         assert len(self.HCI.leaves)==len(self.marginal_utilities), "Not the same number of leaves and marginal utilities"
 
