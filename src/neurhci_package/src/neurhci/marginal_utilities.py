@@ -8,15 +8,22 @@ import torch.nn.functional as F
     It returns a tensor of shape (m,1)
 """
 
-class Identity(nn.Module):
+class MarginalUtility(nn.Module):
+    def __init__(self):
+        super(MarginalUtility, self).__init__()
+        self.input = None
+        self.output = None
+
+class Identity(MarginalUtility):
     def __init__(self, *args):
         super(Identity, self).__init__()
     
     def forward(self, x):
+        self.input = x
         self.output = x
         return(self.output)
 
-class OppositeIdentity(nn.Module):
+class OppositeIdentity(MarginalUtility):
     def __init__(self, *args):
         super(OppositeIdentity, self).__init__()
     
@@ -24,7 +31,7 @@ class OppositeIdentity(nn.Module):
         self.output = 1-x
         return(self.output)
 
-class NonDecreasing(nn.Module):
+class NonDecreasing(MarginalUtility):
     def __init__(self, nb_sigmoids=100):
         super(NonDecreasing, self).__init__()
         self.preweight = torch.nn.Parameter(torch.randn(1, nb_sigmoids))
@@ -51,7 +58,7 @@ class NonIncreasing(NonDecreasing):
         x = super(NonIncreasing, self).forward(x)
         return(1-x)
 
-class Unconstrained(nn.Module):
+class Unconstrained(MarginalUtility):
     """
         Basically a 1d to 1d MLP
     """
