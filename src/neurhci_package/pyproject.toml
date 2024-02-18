@@ -5,6 +5,5 @@ build-backend = "setuptools.build_meta"
 name = "neurhci"
 version = "2.0.0"
 dependencies = [
-    "numpy",
     "torch",
 ]

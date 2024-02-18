@@ -12,7 +12,6 @@ The code was written with Python 3.11, Python 3.8 or above should work.
 The requirements are listed in src/neurhci_package/pyproject.toml
 Current requirements (with versions used for development):
 torch==2.2.0
-numpy==1.23.5
 
 ## Documentation
 
@@ -38,12 +37,12 @@ import neurhci
 
 The classes detailed here, module by module, either inherit from PyTorch's ``nn.Module``, and can thus be used like any basic module.
 
-* ``marginal_utilities``: classes implementing marginal utilities. Each class has a short string identifier (used as a keyword for easier implementation). We give below each classe's constructor, along with its identifier:
-  * ``"UId": Identity()``: $u(x) = x$
-  * ``"UNId": OppositeIdentity()``: $u(x) = 1-x$
-  * ``"UND": NonDecreasing(nb_sigmoids)``: $u(x) = \sum\limits_{i=1}^p w_i\sigma(\eta_i(x-\beta_i))$ with $p$ the number of sigmoids, $\eta,~\beta,~w$ being learned, and $\sigma$ being a logistic sigmoid. Can represent any non-decreasing function with image in the unit interval.
-  * ``"UNI": NonIncreasing(nb_sigmoids)``: $u(x) = 1-v(x)$ with $v$ a NonDecreasing utility.
-  * ``"UUn": Unconstrained(nb_layers, width)``: a simple MLP with 1d input, 1d output, and ``nb_layers`` fully connected hidden layers, each with ``width`` neurons.
+* ``marginal_utilities``: classes implementing marginal utilities:
+  * ``Identity()``: $u(x) = x$
+  * ``OppositeIdentity()``: $u(x) = 1-x$
+  * ``NonDecreasing(nb_sigmoids)``: $u(x) = \sum\limits_{i=1}^p w_i\sigma(\eta_i(x-\beta_i))$ with $p$ the number of sigmoids, $\eta,~\beta,~w$ being learned, and $\sigma$ being a logistic sigmoid. Can represent any non-decreasing function with image in the unit interval.
+  * ``NonIncreasing(nb_sigmoids)``: $u(x) = 1-v(x)$ with $v$ a NonDecreasing utility.
+  * ``Unconstrained(nb_layers, width)``: a simple MLP with 1d input, 1d output, and ``nb_layers`` fully connected hidden layers, each with ``width`` neurons.
   * ``MarginalUtilitiesLayer(list_of_leaves, types_of_nodes, nb_sigmoids)``: a list of marginal utilities ${u_1,...,u_n}$ where $u_i$ corresponds to ``list_of_leaves[i]`` and has type ``types_of_nodes[list_of_leaves[i]]``. Any non-given type will be replaced by an ``Identity``.
 * ``aggregators``: classes implementing Choquet integral-based aggregators:
   * ``CI2Add``: The $2$-additive Choquet integral, with ``dimension`` inputs.
