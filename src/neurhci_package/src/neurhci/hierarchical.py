@@ -251,12 +251,15 @@ class HCI(nn.Module):
     def winter_values(self, x, y, starting_node=None):
         """
             Computes the Winter value of all leaves of starting_node (i.e. the contribution of all such nodes
-                to the difference in value of starting_node when between self.forward(x) and self.forward(y)).
+                to the difference in value at starting_node between self.forward(x) and self.forward(y)).
 
             The subgraph induced by starting_node and its descendents must be a tree.
 
             The contribution of a non-leaf-node is the sum of the contribution of its descendents.
         """
+        if starting_node is None:
+            assert len(self.roots)==1, "Starting node must be provided."
+            starting_node = self.roots[0]
         leaves = self.get_leaves(starting_node)
         return({l:self.winter_value_single_node(x,y,l,starting_node) for l in leaves})
 
