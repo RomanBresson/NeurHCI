@@ -194,7 +194,7 @@ class HCI(nn.Module):
                 values_to_fix[p] = self.CIs[str(p)](torch.cat([values_to_fix[c] for c in self.hierarchy[p]], dim=1))
         return(values_to_fix[path[0]])
 
-    def winter_value(self, x, y, explained_node, starting_node=None):
+    def winter_value_single_node(self, x, y, explained_node, starting_node=None):
         """
             x,y: two tensors of size (m, dimension)
             starting_node: the node whose difference in value must be explained (by default, the root of the tree)
@@ -246,6 +246,18 @@ class HCI(nn.Module):
                         term_to_add *= nb_permutations_global*nb_permutations_sibs
                         sum_of_deltas += term_to_add
         return(sum_of_deltas/number_of_permutations)
+
+    def winter_values(self, x, y, starting_node=None):
+        """
+            Computes the Winter value of all leaves of starting_node (i.e. the contribution of all such nodes
+                to the difference in value of starting_node when between self.forward(x) and self.forward(y)).
+
+            The subgraph induced by starting_node and its descendents must be a tree.
+
+            The contribution of a non-leaf-node is the sum of the contribution of its descendents.
+        """
+        leaves = self.get_leaves(starting_node)
+        return({l:self.winter_value_single_node(x,y,l,starting_node) for l in leaves})
 
 class HCI2layers(HCI):
     """
