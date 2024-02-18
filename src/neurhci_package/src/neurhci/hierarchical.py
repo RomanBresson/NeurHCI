@@ -158,16 +158,17 @@ class HCI(nn.Module):
         """
         next_to_treat = [node]
         treated = []
-        leaves = {}
+        leaves = set()
         while next_to_treat:
             current_node = next_to_treat.pop(0)
             if current_node in treated: #in case of a non-tree DAG
                 continue
             treated.append(current_node)
-            if current_node in leaves:
+            if current_node in self.leaves:
                 leaves.add(current_node)
             else:
                 next_to_treat += self.hierarchy[current_node]
+        return(leaves)
 
     def siblings_node(self, node):
         """
