@@ -63,7 +63,7 @@ class CI2Add(nn.Module):
                 current_element += 1
         return(canonical)
 
-    def compute_mobius(self):
+    def mobius(self):
         """
             Computes the Möbius transform of the fuzzy measure 
         """
@@ -83,7 +83,7 @@ class CI2Add(nn.Module):
                     current_element += 1
         return(mobius)
 
-    def compute_shapley_values_global(self):
+    def shapley_values_global(self):
         """
             Computes the global Shapley values of the input features, i.e. their average contribution to the model
         """
@@ -101,7 +101,7 @@ class CI2Add(nn.Module):
                     current_node += 1
         return(shapley)
 
-    def compute_local_shapley(self, x, y):
+    def local_shapley(self, x, y):
         """
             Computes the Shapley values for the input features for explaining the difference between two inputs
         """
