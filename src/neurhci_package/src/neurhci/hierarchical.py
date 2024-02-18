@@ -152,7 +152,7 @@ class HCI(nn.Module):
             path.append(curr_node)
         return(path[::-1])
 
-    def leaves(self, node):
+    def get_leaves(self, node):
         """
             Returns all leaves that are descendent of "node"
         """
