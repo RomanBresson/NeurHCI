@@ -1,4 +1,5 @@
 import itertools
+from math import factorial
 import torch
 import torch.nn as nn
 from .aggregators import CI2Add
@@ -94,15 +95,15 @@ class HCI(nn.Module):
         """
         if len(x.shape)==1:
             x = x.unsqueeze(0)
-        node_values = {n:None for n in self.aggregators}
+        self.node_values = {n:None for n in self.aggregators}
         for i,l in enumerate(self.leaves):
-            node_values[l] = x[:,i:i+1]
+            self.node_values[l] = x[:,i:i+1]
         for h in range(1,self.max_height+1):
             for n in self.heightmap[h]:
-                children_values = [node_values[k] for k in self.hierarchy[n]]
+                children_values = [self.node_values[k] for k in self.hierarchy[n]]
                 inputs = torch.cat(children_values, axis=1)
-                node_values[n] = self.CIs[str(n)](inputs)
-        return(torch.cat([node_values[r] for r in self.roots], axis=1))
+                self.node_values[n] = self.CIs[str(n)](inputs)
+        return(torch.cat([self.node_values[r] for r in self.roots], axis=1))
     
     def compute_winter_values_global(self, starting_node=None):
         """
