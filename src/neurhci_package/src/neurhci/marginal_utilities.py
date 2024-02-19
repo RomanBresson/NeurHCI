@@ -127,7 +127,7 @@ class MarginalUtilitiesLayer(nn.ModuleList):
         for l in list_of_leaves:
             if l not in types_of_nodes:
                 types_of_nodes[l] = Identity
-            self.append(types_of_nodes[l](nb_sigmoids))
+            self.append(types_of_nodes[l](nb_sigmoids=nb_sigmoids))
 
     def forward(self, x):
         x = torch.cat([ui(x[:,i:i+1]) for i,ui in enumerate(self)], axis=-1)
