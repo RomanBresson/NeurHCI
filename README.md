@@ -43,7 +43,7 @@ The classes detailed here, module by module, either inherit from PyTorch's ``nn.
   * ``NonDecreasing(nb_sigmoids)``: $u(x) = \sum\limits_{i=1}^p w_i\sigma(\eta_i(x-\beta_i))$ with $p$ the number of sigmoids, $\eta,~\beta,~w$ being learned, and $\sigma$ being a logistic sigmoid. Can represent any non-decreasing function with image in the unit interval.
   * ``NonIncreasing(nb_sigmoids)``: $u(x) = 1-v(x)$ with $v$ a NonDecreasing utility.
   * ``Unconstrained(nb_layers, width)``: a simple MLP with 1d input, 1d output, and ``nb_layers`` fully connected hidden layers, each with ``width`` neurons.
-  * ``MarginalUtilitiesLayer(list_of_leaves, types_of_nodes, nb_sigmoids)``: a list of marginal utilities ${u_1,...,u_n}$ where $u_i$ corresponds to ``list_of_leaves[i]`` and has type ``types_of_nodes[list_of_leaves[i]]``. Any non-given type will be replaced by an ``Identity``.
+  * ``MarginalUtilitiesLayer(list_of_leaves, types_of_leaves, nb_sigmoids)``: a list of marginal utilities ${u_1,...,u_n}$ where $u_i$ corresponds to ``list_of_leaves[i]`` and has type ``types_of_leaves[list_of_leaves[i]]``. Any non-given type will be replaced by an ``Identity``.
 * ``aggregators``: classes implementing Choquet integral-based aggregators:
   * ``CI2Add``: The $2$-additive Choquet integral, with ``dimension`` inputs.
 * ``hierarchical``: class of hierarchical Choquet integral, i.e. a multi-step aggregator which aggregates the inputs successively following a directed-acyclic graph structure. Contains the following classes:

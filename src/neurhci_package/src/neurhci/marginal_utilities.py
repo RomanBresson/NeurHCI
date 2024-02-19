@@ -114,20 +114,20 @@ class MarginalUtilitiesLayer(nn.ModuleList):
     """
         A list of marginal utilities.
     """
-    def __init__(self, list_of_leaves, types_of_nodes, nb_sigmoids):
+    def __init__(self, list_of_leaves, types_of_leaves, nb_sigmoids):
         """
             list_of_leaves: a list of the integer ids of all the leaves.
-            types_of_nodes: the type of each leaf, as a dictionary {leaf id: type}.
+            types_of_leaves: the type of each leaf, as a dictionary {leaf id: type}.
                                 Any unspecified type will be set to Identity.
             nb_sigmoids: the number of sigmoids to be used in the marginal utilities that require it.
         """
         super(MarginalUtilitiesLayer, self).__init__()
-        if types_of_nodes is None:
-            types_of_nodes = {}
+        if types_of_leaves is None:
+            types_of_leaves = {}
         for l in list_of_leaves:
-            if l not in types_of_nodes:
-                types_of_nodes[l] = Identity
-            self.append(types_of_nodes[l](nb_sigmoids=nb_sigmoids))
+            if l not in types_of_leaves:
+                types_of_leaves[l] = Identity
+            self.append(types_of_leaves[l](nb_sigmoids=nb_sigmoids))
 
     def forward(self, x):
         x = torch.cat([ui(x[:,i:i+1]) for i,ui in enumerate(self)], axis=-1)
