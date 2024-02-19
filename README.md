@@ -17,10 +17,10 @@ torch==2.2.0
 
 ### Tutorial
 
-A how-to-use script is provided in src/example_scripts/tutorial. It details the important methods and classes for:
--building a model
--training a model
--extracting explanations (Shapley/Winter values) from the trained model.
+A jupyter notebook is provided in src/example_scripts/tutorial.ipynb. It should give one an overview of the classes, the methods, and overall how to:
+-build a model
+-train a model
+-extract explanations (Shapley/Winter values) from the trained model.
 
 ### Installation
 
