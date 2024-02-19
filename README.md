@@ -15,6 +15,13 @@ torch==2.2.0
 
 ## Documentation
 
+### Tutorial
+
+A how-to-use script is provided in src/example_scripts/tutorial. It details the important methods and classes for:
+-building a model
+-training a model
+-extracting explanations (Shapley/Winter values) from the trained model.
+
 ### Installation
 
 Get the code with:
