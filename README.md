@@ -1,4 +1,4 @@
-# NeurHCI
+# Neur-HCI
 
 This repository is the official implementation of Neur-HCI as introduced in our [paper](https://www.ijcai.org/proceedings/2020/0275.pdf) and completed in our [thesis](https://theses.hal.science/tel-03596964). It consists in neural network architectures made to learn utilitaristic hierarchical Choquet integrals (UHCI), a class of models used in multicriteria decision aiding.
 
