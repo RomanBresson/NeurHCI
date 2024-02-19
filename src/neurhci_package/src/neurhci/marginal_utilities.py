@@ -32,13 +32,18 @@ class OppositeIdentity(MarginalUtility):
         return(self.output)
 
 class NonDecreasing(MarginalUtility):
-    def __init__(self, nb_sigmoids=100):
+    def __init__(self, nb_sigmoids=100, centered=False):
+        """
+            nb_sigmoids: how many sigmoids should be used to compose the function
+            centered: False will initialize expecting data in the unit interval. True will initialize
+                expecting data centered on 0.
+        """
         super(NonDecreasing, self).__init__()
         self.preweight = torch.nn.Parameter(torch.randn(1, nb_sigmoids))
         self.weight = F.softmax(self.preweight, dim=-1)
         self.pre_precision = torch.nn.Parameter(torch.abs(torch.randn(1, nb_sigmoids)*nb_sigmoids))
         self.precision = F.softplus(self.pre_precision)
-        self.bias = torch.nn.Parameter(torch.rand(1, nb_sigmoids))
+        self.bias = torch.nn.Parameter(torch.randn(1, nb_sigmoids)) if centered else torch.nn.Parameter(torch.rand(1, nb_sigmoids))
 
     def forward(self, x):
         self.precision = F.softplus(self.pre_precision)

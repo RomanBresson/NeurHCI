@@ -117,7 +117,7 @@ class HCI(nn.Module):
             The subgraph yielded by the starting node's descendants must be a tree.
         """
         if starting_node is None:
-            assert len(self.roots)==1, "The node for which to compute the Shapley values must be given"
+            assert len(self.roots)==1, "Ambiguous node for which to compute the Shapley values."
             starting_node = self.roots[0]
         if starting_node in self.leaves:
             return({starting_node: torch.tensor(1.)})
