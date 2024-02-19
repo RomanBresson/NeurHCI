@@ -15,20 +15,50 @@ class MarginalUtility(nn.Module):
         self.output = None
 
 class Identity(MarginalUtility):
-    def __init__(self, *args):
+    # Should only be used with data in the (centered) unit interval for commensurability to hold.
+    def __init__(self, centered=False, *args, **kwargs):
+        """
+            centered: should be True if the data is centered on 0, False if it is in the unit interval.
+                Probably not critical but will provide better initialization.
+        """
         super(Identity, self).__init__()
+        self.bias = 0.5 if centered else 0.
+
+    def forward(self, x):
+        self.input = x
+        self.output = x+self.bias
+        return(self.output)
+
+class IdentityClipped(Identity):
+    # Identity over the unit interval for commensurability to hold, bounded between 0 and 1.
+    def __init__(self, *args, **kwargs):
+        super(IdentityClipped, self).__init__(*args, **kwargs)
     
     def forward(self, x):
         self.input = x
-        self.output = x
+        x = super(IdentityClipped, self).forward(x)
+        self.output = torch.clip(x, 0., 1.)
         return(self.output)
 
-class OppositeIdentity(MarginalUtility):
-    def __init__(self, *args):
-        super(OppositeIdentity, self).__init__()
+class OppositeIdentity(Identity):
+    # Should only be used with data in the unit interval for commensurability to hold.
+    def __init__(self, *args, **kwargs):
+        super(OppositeIdentity, self).__init__(*args, **kwargs)
     
     def forward(self, x):
+        x = super(OppositeIdentity, self).forward(x)
         self.output = 1-x
+        return(self.output)
+
+class OppositeIdentityClipped(OppositeIdentity):
+    # OppositeIdentity over the unit interval for commensurability to hold.
+    def __init__(self, *args, **kwargs):
+        super(OppositeIdentity, self).__init__(*args, **kwargs)
+
+    def forward(self, x):
+        self.input = x
+        x = super(OppositeIdentityClipped, self).forward(x)
+        self.output = torch.clip(x, 0., 1.)
         return(self.output)
 
 class NonDecreasing(MarginalUtility):

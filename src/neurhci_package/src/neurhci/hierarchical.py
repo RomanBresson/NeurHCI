@@ -256,6 +256,9 @@ class HCI(nn.Module):
             The subgraph induced by starting_node and its descendents must be a tree.
 
             The contribution of a non-leaf-node is the sum of the contribution of its descendents.
+
+            Note: this is highly inefficient as it recomputes everything for each leaf.
+            #TODO Make it smarter by reusing permutations.
         """
         if starting_node is None:
             assert len(self.roots)==1, "Starting node must be provided."
