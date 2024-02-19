@@ -42,14 +42,15 @@ import neurhci
 
 ### Submodules
 
-The classes detailed here, module by module, either inherit from PyTorch's ``nn.Module``, and can thus be used like any basic module.
+The classes detailed here, module by module, either inherit from PyTorch's ``nn.Module``, and can thus be used like any basic module. All these modules are proven to have the monotonicity required by the model. All models (except those who are explicitely excluded below) respect the normalization constraints of the model. See the sources for clearer understanding of the underlying theory.
 
-* ``marginal_utilities``: classes implementing marginal utilities:
-  * ``Identity()``: $u(x) = x$
-  * ``OppositeIdentity()``: $u(x) = 1-x$
-  * ``NonDecreasing(nb_sigmoids)``: $u(x) = \sum\limits_{i=1}^p w_i\sigma(\eta_i(x-\beta_i))$ with $p$ the number of sigmoids, $\eta,~\beta,~w$ being learned, and $\sigma$ being a logistic sigmoid. Can represent any non-decreasing function with image in the unit interval.
-  * ``NonIncreasing(nb_sigmoids)``: $u(x) = 1-v(x)$ with $v$ a NonDecreasing utility.
-  * ``Unconstrained(nb_layers, width)``: a simple MLP with 1d input, 1d output, and ``nb_layers`` fully connected hidden layers, each with ``width`` neurons.
+* ``marginal_utilities``: classes implementing marginal utilities. It is to be noted that many properties of the model only hold if the outputs of the marginal utility is in the unit interval. Their default initialization is best for inputs who are also in the unit interval. When the data is normalized around 0, passing ``centered=True`` to the constructors makes it the same function applied to x+0.5, which should yield a better initialization.
+  * ``Identity()``: $u(x) = x$ (no learnable parameter, does not respect normalization if the inputs are not normalized in the unit interval)
+  * ``OppositeIdentity()``: $u(x) = 1-x$ (no learnable parameter, does not respect normalization if the inputs are not normalized in the unit interval)
+  * ``IdentityClipped``/``OppositeIdentityClipped``: variants of Identity and OppositeIdentity whose outputs are clipped in the unit interval to ensure normalization.
+  * ``NonDecreasing(nb_sigmoids)``: $u(x) = \sum\limits_{i=1}^p w_i\sigma(\eta_i(x-\beta_i))$ with $p$ the number of sigmoids, $\eta,~\beta,~w$ being learned, and $\sigma$ being a logistic sigmoid. Can represent any non-decreasing function with image in the unit interval (and only those).
+  * ``NonIncreasing(nb_sigmoids)``: $u(x) = 1-v(x)$ with $v$ a ``NonDecreasing``.
+  * ``Unconstrained(nb_layers, width)``: a simple MLP with 1d input, 1d output, and ``nb_layers`` fully connected hidden layers, each with ``width`` neurons. DOES NOT FIT ANY CONSTRAINTS OF NORMALIZATION OF MONOTONICITY, it is simply here if required for some specific cases.
   * ``MarginalUtilitiesLayer(list_of_leaves, types_of_leaves, nb_sigmoids)``: a list of marginal utilities ${u_1,...,u_n}$ where $u_i$ corresponds to ``list_of_leaves[i]`` and has type ``types_of_leaves[list_of_leaves[i]]``. Any non-given type will be replaced by an ``Identity``.
 * ``aggregators``: classes implementing Choquet integral-based aggregators:
   * ``CI2Add``: The $2$-additive Choquet integral, with ``dimension`` inputs.
@@ -60,7 +61,13 @@ The classes detailed here, module by module, either inherit from PyTorch's ``nn.
 * ``uhci``:
   * ``UHCI(**kwargs)``: A utilitaristic hierarchical Choquet integral, combination of marginal utilities and a HCI. Can be initialized from an existing ``HCI`` or a hierarchy, and from an existing list of marginal utilities or a ``MarginalUtilitiesLayer``.
 
-The rest of the classes may be implemented at a later date.
+### To do
+
+The classes described above are just a part of the models described in the thesis. The rest will be implemented at a later date, such as:
+* 3-additive Choquet integrals based on 0-1 measures
+* General Choquet integrals
+* Bitonic marginal utilities (single peaked/single valleyed)
+* Marginal utilities selectors, to automatically select the best monotonicity type
 
 ### Cite
 When using this package, please cite one of our papers:
