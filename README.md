@@ -1,10 +1,10 @@
 # Neur-HCI
 
-This repository is the official implementation of Neur-HCI as introduced in our [paper](https://www.ijcai.org/proceedings/2020/0275.pdf) and completed in our [thesis](https://theses.hal.science/tel-03596964). It consists in neural network architectures made to learn utilitaristic hierarchical Choquet integrals (UHCI), a class of models used in multicriteria decision aiding.
+This repository is the official implementation of Neur-HCI as introduced in our [paper](https://www.ijcai.org/proceedings/2020/0275.pdf) and completed in our [thesis](https://theses.hal.science/tel-03596964). It consists in neural network architectures specifically designed to learn some particular classes of models. The main component is the Choquet integral, a powerful, yet highly interpretable fuzzy-logic-based aggregator, whose interest is confirmed by its popularity in the decision modeling community (and more recently in the machine learning community).
+
+For each class of models, a representation theorem is provided and proven in the thesis, such that the search space exactly coincides with the sought class. All theoretical properties applicable to Choquet integrals are thus formally valid by design.
 
 This is a reimplementation of the code used in those papers, and not the original code.
-
-For each class, a representation theorem is provided and proven in the thesis, such that the search space exactly coincides with the sought class. All theoretical properties applicable to Choquet integrals are thus formally valid by design.
 
 # Table of Contents
 1. [Requirements](#requirements)
