@@ -77,6 +77,7 @@ The classes described above are just a part of the models described in the thesi
 * General Choquet integrals
 * Bitonic marginal utilities (single peaked/single valleyed)
 * Marginal utilities selectors, to automatically select the best monotonicity type
+* ...
 
 ## Cite
 When using this package, please cite one of our papers:
@@ -109,10 +110,12 @@ If using any other class:
   SCHOOL = {{Universit{\'e} Paris-Saclay}},
   YEAR = {2022},
   MONTH = Feb,
-  KEYWORDS = {Multi-Criteria Decision Aiding ; Choquet Integral ; Machine Learning ; Trustable AI ; Aide {\`a} la D{\'e}cision Multicrit{\`e}re ; Int{\'e}grale de Choquet ; Apprentissage Automatique ; IA de confiance},
   TYPE = {Theses},
-  PDF = {https://theses.hal.science/tel-03596964/file/107767_BRESSON_2022_archivage.pdf},
-  HAL_ID = {tel-03596964},
-  HAL_VERSION = {v1},
+  PDF = {https://theses.hal.science/tel-03596964/file/107767_BRESSON_2022_archivage.pdf}
 }
 ```
+
+## Contact
+
+Please do not hesitate to provide feedback or suggestion through GitHub, or send me an email at:
+roman.bresson.5@gmail.com
