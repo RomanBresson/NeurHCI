@@ -6,6 +6,15 @@ This is a reimplementation of the code used in those papers, and not the origina
 
 For each class, a representation theorem is provided and proven in the thesis, such that the search space exactly coincides with the sought class. All theoretical properties applicable to Choquet integrals are thus formally valid by design.
 
+# Table of Contents
+1. [Requirements](#requirements)
+2. [Documentation](#documentation)
+    * [Tutorial](#tutorial)
+    * [Installation](#installation)
+    * [Submodules](#submodules)
+    * [To do](#to-do)
+3. [Cite](#cite)
+
 ## Requirements
 
 The code was written with Python 3.11, Python 3.8 or above should work.
@@ -69,7 +78,7 @@ The classes described above are just a part of the models described in the thesi
 * Bitonic marginal utilities (single peaked/single valleyed)
 * Marginal utilities selectors, to automatically select the best monotonicity type
 
-### Cite
+## Cite
 When using this package, please cite one of our papers:
 
 If using only 2-additive Choquet integrals and/or monotonic marginal utilities:
