@@ -14,6 +14,7 @@ For each class, a representation theorem is provided and proven in the thesis, s
     * [Submodules](#submodules)
     * [To do](#to-do)
 3. [Cite](#cite)
+4. [Contact](#contact)
 
 ## Requirements
 
