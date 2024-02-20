@@ -28,9 +28,9 @@ torch==2.2.0
 ### Tutorial
 
 A jupyter notebook is provided in src/notebooks/tutorial.ipynb. It should give one an overview of the classes, the methods, and overall how to:
--build a model
--train a model
--extract explanations (Shapley/Winter values) from the trained model.
+- build a model
+- train a model
+- extract explanations (Shapley/Winter values) from the trained model.
 
 ### Installation
 
