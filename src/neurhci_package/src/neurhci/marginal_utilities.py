@@ -104,6 +104,7 @@ class Unconstrained(MarginalUtility):
             modules.append(nn.Linear(width, width))
             modules.append(nn.ReLU())
         modules.append(nn.Linear(width, 1))
+        modules.append(nn.Sigmoid())
         self.linears = nn.Sequential(*modules)
 
     def forward(self, x):
