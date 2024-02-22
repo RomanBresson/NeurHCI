@@ -1,10 +1,10 @@
 # Neur-HCI
 
-This repository is the official implementation of Neur-HCI as introduced in our [paper](https://www.ijcai.org/proceedings/2020/0275.pdf) and completed in our [thesis](https://theses.hal.science/tel-03596964). It consists in neural network architectures made to learn utilitaristic hierarchical Choquet integrals (UHCI), a class of models used in multicriteria decision aiding.
+This repository is the official implementation of Neur-HCI as introduced in our [paper](https://www.ijcai.org/proceedings/2020/0275.pdf) and completed in our [thesis](https://theses.hal.science/tel-03596964). It consists in neural network architectures specifically designed to learn some particular classes of models, called UHCI. The main component is the Choquet integral, a powerful, yet highly interpretable fuzzy-logic-based aggregator, whose interest is confirmed by its popularity in the decision modeling community (and more recently in the machine learning community).
+
+For each class of models, a representation theorem is provided and proven in the thesis, such that the search space exactly coincides with the sought class. All theoretical properties applicable to Choquet integrals are thus formally valid by design.
 
 This is a reimplementation of the code used in those papers, and not the original code.
-
-For each class, a representation theorem is provided and proven in the thesis, such that the search space exactly coincides with the sought class. All theoretical properties applicable to Choquet integrals are thus formally valid by design.
 
 # Table of Contents
 1. [Requirements](#requirements)
@@ -14,6 +14,7 @@ For each class, a representation theorem is provided and proven in the thesis, s
     * [Submodules](#submodules)
     * [To do](#to-do)
 3. [Cite](#cite)
+4. [Contact](#contact)
 
 ## Requirements
 
@@ -26,10 +27,10 @@ torch==2.2.0
 
 ### Tutorial
 
-A jupyter notebook is provided in src/example_scripts/tutorial.ipynb. It should give one an overview of the classes, the methods, and overall how to:
--build a model
--train a model
--extract explanations (Shapley/Winter values) from the trained model.
+A jupyter notebook is provided in src/notebooks/tutorial.ipynb. It should give one an overview of the classes, the methods, and overall how to:
+- build a model
+- train a model
+- extract explanations (Shapley/Winter values) from the trained model.
 
 ### Installation
 
@@ -53,7 +54,7 @@ import neurhci
 
 The classes detailed here, module by module, either inherit from PyTorch's ``nn.Module``, and can thus be used like any basic module. All these modules are proven to have the monotonicity required by the model. All models (except those who are explicitely excluded below) respect the normalization constraints of the model. See the sources for clearer understanding of the underlying theory.
 
-* ``marginal_utilities``: classes implementing marginal utilities. It is to be noted that many properties of the model only hold if the outputs of the marginal utility is in the unit interval. Their default initialization is best for inputs who are also in the unit interval. When the data is normalized around 0, passing ``centered=True`` to the constructors makes it the same function applied to x+0.5, which should yield a better initialization.
+* ``marginal_utilities``: classes implementing marginal utilities. It is to be noted that many properties of the model only hold if the outputs of the marginal utility is in the unit interval. Their default initialization is best for inputs who are also in the unit interval. When the data is normalized around 0, passing ``centered=True`` to the constructors makes it the same function applied to x+0.5, which should yield a better initialization. We do not recommend this, and instead recommend using explicit shifting or renormalization of the data before feeding it to the network.
   * ``Identity()``: $u(x) = x$ (no learnable parameter, does not respect normalization if the inputs are not normalized in the unit interval)
   * ``OppositeIdentity()``: $u(x) = 1-x$ (no learnable parameter, does not respect normalization if the inputs are not normalized in the unit interval)
   * ``IdentityClipped``/``OppositeIdentityClipped``: variants of Identity and OppositeIdentity whose outputs are clipped in the unit interval to ensure normalization.
@@ -77,6 +78,7 @@ The classes described above are just a part of the models described in the thesi
 * General Choquet integrals
 * Bitonic marginal utilities (single peaked/single valleyed)
 * Marginal utilities selectors, to automatically select the best monotonicity type
+* ...
 
 ## Cite
 When using this package, please cite one of our papers:
@@ -109,10 +111,12 @@ If using any other class:
   SCHOOL = {{Universit{\'e} Paris-Saclay}},
   YEAR = {2022},
   MONTH = Feb,
-  KEYWORDS = {Multi-Criteria Decision Aiding ; Choquet Integral ; Machine Learning ; Trustable AI ; Aide {\`a} la D{\'e}cision Multicrit{\`e}re ; Int{\'e}grale de Choquet ; Apprentissage Automatique ; IA de confiance},
   TYPE = {Theses},
-  PDF = {https://theses.hal.science/tel-03596964/file/107767_BRESSON_2022_archivage.pdf},
-  HAL_ID = {tel-03596964},
-  HAL_VERSION = {v1},
+  PDF = {https://theses.hal.science/tel-03596964/file/107767_BRESSON_2022_archivage.pdf}
 }
 ```
+
+## Contact
+
+Please do not hesitate to provide feedback or suggestion through GitHub, or send me an email at:
+roman.bresson.5@gmail.com
