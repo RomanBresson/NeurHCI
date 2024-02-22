@@ -97,7 +97,7 @@ class Unconstrained(MarginalUtility):
     """
         Basically a 1d to 1d MLP
     """
-    def __init__(self, nb_layers=2, width=100):
+    def __init__(self, nb_layers=2, width=100, **kwargs):
         super(Unconstrained, self).__init__()
         modules = [nn.Linear(1, width), nn.ReLU()]
         for _ in range(nb_layers-2):

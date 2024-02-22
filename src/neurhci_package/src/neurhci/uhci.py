@@ -23,13 +23,13 @@ class UHCI(nn.Module):
             self.HCI = kwargs['hci'] if 'hci' in kwargs else HCI(kwargs['hierarchy'])
         except:
             raise TypeError("Neither an HCI nor a hierarchy were given")
-        try:
+        if ('marginal_utilities' in kwargs)|('types_of_leaves' in kwargs):
             if 'marginal_utilities' in kwargs:
                 self.marginal_utilities = kwargs['marginal_utilities']  
             else:
                 types_of_leaves = kwargs['types_of_leaves']
                 self.marginal_utilities = MarginalUtilitiesLayer(self.HCI.leaves, types_of_leaves, nb_sigmoids)
-        except:
+        else:
             types_of_leaves = {i:Identity for i in self.HCI.leaves}
             self.marginal_utilities = MarginalUtilitiesLayer(self.HCI.leaves, types_of_leaves, nb_sigmoids)
         assert len(self.HCI.leaves)==len(self.marginal_utilities), "Not the same number of leaves and marginal utilities"
