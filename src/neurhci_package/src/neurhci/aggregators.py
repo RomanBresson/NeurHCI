@@ -151,8 +151,9 @@ class CI01FromAntichain(nn.Module):
 
         An antichain is a tuple of tuples of indices. The associated CI is provably a max(min)
     """
-    def __init__(self, antichain):
+    def __init__(self, antichain, dimension):
         super(CI01FromAntichain, self).__init__()
+        self.dim = dimension
         self.antichain = antichain
         self.output = 0.
 
@@ -171,10 +172,10 @@ class CI3addFrom01(nn.Module):
         all_triples = itertools.combinations(range(self.dim), 3)
         self.zero_one_CIs = torch.nn.ModuleList({})
         for i in range(self.dim):
-            self.zero_one_CIs.append(CI01FromAntichain(((i,),)))
+            self.zero_one_CIs.append(CI01FromAntichain(((i,),)), self.dim)
         for i,j in all_doubles:
-            self.zero_one_CIs.append(CI01FromAntichain(((i,j),)))
-            self.zero_one_CIs.append(CI01FromAntichain(((i,),(j,))))
+            self.zero_one_CIs.append(CI01FromAntichain(((i,j),)), self.dim)
+            self.zero_one_CIs.append(CI01FromAntichain(((i,),(j,))), self.dim)
         for i,j,k in all_triples:
             ac = [
                 ((i,j,k),),
@@ -187,7 +188,7 @@ class CI3addFrom01(nn.Module):
                 ((i,j),(i,k)),
             ]
             for a in ac:
-                self.zero_one_CIs.append(CI01FromAntichain(a))
+                self.zero_one_CIs.append(CI01FromAntichain(a), self.dim)
         self.preweight = nn.Parameter(torch.randn((1,len(self.zero_one_CIs))))
 
     def update_weight(self):
