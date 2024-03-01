@@ -60,10 +60,14 @@ The classes detailed here, module by module, either inherit from PyTorch's ``nn.
   * ``IdentityClipped``/``OppositeIdentityClipped``: variants of Identity and OppositeIdentity whose outputs are clipped in the unit interval to ensure normalization.
   * ``NonDecreasing(nb_sigmoids)``: $u(x) = \sum\limits_{i=1}^p w_i\sigma(\eta_i(x-\beta_i))$ with $p$ the number of sigmoids, $\eta,~\beta,~w$ being learned, and $\sigma$ being a logistic sigmoid. Can represent any non-decreasing function with image in the unit interval (and only those).
   * ``NonIncreasing(nb_sigmoids)``: $u(x) = 1-v(x)$ with $v$ a ``NonDecreasing``.
+  * ``Selector(U1, U2)``: $u(x) = sU1(x) + (1-s) U2(x)$ with s a learned variable. It operates a switching that selects the best utility among U1 and U2 and parameters when it is a priori unknown.
+  * ``MonotonicSelector(nb_sigmoids)``: a selector where U1 is a ``NonDecreasing``and U2 is a ``NonIncreasing``. It effectively selects the optimal monotonicity.
   * ``Unconstrained(nb_layers, width)``: a simple MLP with 1d input, 1d output, and ``nb_layers`` fully connected hidden layers, each with ``width`` neurons. DOES NOT FIT ANY CONSTRAINTS OF NORMALIZATION OF MONOTONICITY, it is simply here if required for some specific cases.
   * ``MarginalUtilitiesLayer(list_of_leaves, types_of_leaves, nb_sigmoids)``: a list of marginal utilities ${u_1,...,u_n}$ where $u_i$ corresponds to ``list_of_leaves[i]`` and has type ``types_of_leaves[list_of_leaves[i]]``. Any non-given type will be replaced by an ``Identity``.
 * ``aggregators``: classes implementing Choquet integral-based aggregators:
   * ``CI2Add``: The $2$-additive Choquet integral, with ``dimension`` inputs.
+  * ``CI01FromAntichain``: A CI parameterized by a 0-1 FM. Nothing learnable, the FM is determined by its corresponding antichain (see thesis).
+  * ``CI3addFrom01``: A subset of the 3-additive CIs, represented as a convex sum of CIs parameterized by 3-additive 0-1 FMs (see thesis).
 * ``hierarchical``: class of hierarchical Choquet integral, i.e. a multi-step aggregator which aggregates the inputs successively following a directed-acyclic graph structure. Contains the following classes:
   * ``HCI(hierarchy)``: builds a HCI with the structure passed as argument. ``hierarchy`` is a dict of {(int) key: (list of int) value} where key is the id of a node, and value is the list of this node's children. Details and examples can be found below.
   * ``HCI2layers(dimension, children_by_aggregators)``: A tree-HCI with a single root single intermediate layer, and ``dimension leaves``. Each node in the intermediate layer aggregates ``children_by_aggregators`` leaves (or fewer for the last one). The root aggregates all intermediate nodes
@@ -74,10 +78,9 @@ The classes detailed here, module by module, either inherit from PyTorch's ``nn.
 ### To do
 
 The classes described above are just a part of the models described in the thesis. The rest will be implemented at a later date, such as:
-* 3-additive Choquet integrals based on 0-1 measures
+* Shapley and explainability suite for 3-additive Choquet integrals based on 0-1 measures
 * General Choquet integrals
 * Bitonic marginal utilities (single peaked/single valleyed)
-* Marginal utilities selectors, to automatically select the best monotonicity type
 * ...
 
 ## Cite
