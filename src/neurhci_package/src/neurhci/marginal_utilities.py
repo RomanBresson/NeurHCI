@@ -115,7 +115,7 @@ class MarginalUtilitiesLayer(nn.ModuleList):
     """
         A list of marginal utilities.
     """
-    def __init__(self, list_of_leaves, types_of_leaves, nb_sigmoids):
+    def __init__(self, list_of_leaves, types_of_leaves, nb_sigmoids=0.):
         """
             list_of_leaves: a list of the integer ids of all the leaves.
             types_of_leaves: the type of each leaf, as a dictionary {leaf id: type}.
