@@ -145,5 +145,59 @@ class CI2Add(nn.Module):
         shap = torch.cat([self.local_shapley_value(x, y, i) for i in range(self.dim)], dim=1)
         return(shap)
 
-class CI3add(nn.Module):
-    ...
+class CI01FromAntichain(nn.Module):
+    """
+        A Choquet Integral with a 0-1 Fuzzy Measure defined as its associated antichain.
+
+        An antichain is a tuple of tuples of indices. The associated CI is provably a max(min)
+    """
+    def __init__(self, antichain):
+        super(CI01FromAntichain, self).__init__()
+        self.antichain = antichain
+        self.output = 0.
+
+    def forward(self, x):
+        self.input = x
+        get_mins = torch.cat([torch.min(x[:,group], dim=1).values.unsqueeze(1) for group in self.antichain], dim=1)
+        self.output = torch.max(get_mins, dim=1).values.unsqueeze(1)
+        return(self.output)
+
+class CI3addFrom01(nn.Module):
+    # could be optimized through tensor manipulation
+    def __init__(self, dimension):
+        super(CI3addFrom01, self).__init__()
+        self.dim = dimension
+        all_doubles = itertools.combinations(range(self.dim), 2)
+        all_triples = itertools.combinations(range(self.dim), 3)
+        self.zero_one_CIs = torch.nn.ModuleList({})
+        for i in range(self.dim):
+            self.zero_one_CIs.append(CI01FromAntichain(((i,),)))
+        for i,j in all_doubles:
+            self.zero_one_CIs.append(CI01FromAntichain(((i,j),)))
+            self.zero_one_CIs.append(CI01FromAntichain(((i,),(j,))))
+        for i,j,k in all_triples:
+            ac = [
+                ((i,j,k),),
+                ((i,),(j,),(k,)),
+                ((i,),(j,k)),
+                ((j,),(i,k)),
+                ((k,),(i,j)),
+                ((i,j),(j,k)),
+                ((i,k),(j,k)),
+                ((i,j),(i,k)),
+            ]
+            for a in ac:
+                self.zero_one_CIs.append(CI01FromAntichain(a))
+        self.preweight = nn.Parameter(torch.randn((1,len(self.zero_one_CIs))))
+
+    def update_weight(self):
+        self.weight = F.softmax(self.preweight, dim=1)
+
+    def forward(self, x):
+        self.input = x
+        if len(x.shape)==1:
+            x = x.unsqueeze(0)
+        x_completed = torch.cat([zoci(x) for zoci in self.zero_one_CIs], dim=1)
+        self.update_weight()
+        self.output = F.linear(x_completed, self.weight)
+        return(self.output)
