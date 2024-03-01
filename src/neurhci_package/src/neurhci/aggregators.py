@@ -112,26 +112,27 @@ class CI2Add(nn.Module):
 
             Computes the Shapley values for the ith input feature for explaining the difference between two inputs.
         """
-        shap = torch.zeros(x.shape[0], 1)
-        divisor = 0.
-        for pos_in_permutation in range(self.dim):
-            #We do not explicitely use all permutations, sice many are equivalent for our purpose.
-            #Thus, we only consider splits, and reajust by the number of underlying permutations represented by each split.
-            other_children = [c for c in range(self.dim) if c!=i]
-            all_splits = itertools.combinations(other_children, pos_in_permutation)
-            for split_children in all_splits:
-                after_explained = list(split_children) #these  elements will be y
-                nb_permutations = factorial(pos_in_permutation)*factorial(self.dim-pos_in_permutation-1)
-                first_half = x*1
-                first_half[:, after_explained] = y[:, after_explained]
-                second_half = first_half*1
-                second_half[:, i] = y[:, i]
-                compounds_inputs = torch.cat([first_half, second_half])   
-                compounds_outputs = self.forward(compounds_inputs)
-                deltas = compounds_outputs[x.shape[0]:]-compounds_outputs[:x.shape[0]]
-                shap += deltas*nb_permutations
-                divisor += nb_permutations
-        shap /= divisor
+        with torch.no_grad():
+            shap = torch.zeros(x.shape[0], 1)
+            divisor = 0.
+            for pos_in_permutation in range(self.dim):
+                #We do not explicitely use all permutations, sice many are equivalent for our purpose.
+                #Thus, we only consider splits, and reajust by the number of underlying permutations represented by each split.
+                other_children = [c for c in range(self.dim) if c!=i]
+                all_splits = itertools.combinations(other_children, pos_in_permutation)
+                for split_children in all_splits:
+                    after_explained = list(split_children) #these  elements will be y
+                    nb_permutations = factorial(pos_in_permutation)*factorial(self.dim-pos_in_permutation-1)
+                    first_half = x*1
+                    first_half[:, after_explained] = y[:, after_explained]
+                    second_half = first_half*1
+                    second_half[:, i] = y[:, i]
+                    compounds_inputs = torch.cat([first_half, second_half])
+                    compounds_outputs = self.forward(compounds_inputs)
+                    deltas = compounds_outputs[x.shape[0]:]-compounds_outputs[:x.shape[0]]
+                    shap += deltas*nb_permutations
+                    divisor += nb_permutations
+            shap /= divisor
         return(shap)
 
     def shapley_values(self, x, y):

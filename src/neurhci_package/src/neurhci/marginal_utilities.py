@@ -95,7 +95,7 @@ class NonIncreasing(NonDecreasing):
 
 class Unconstrained(MarginalUtility):
     """
-        Basically a 1d to 1d MLP
+        Basically a 1d to 1d MLP, in the 0-1 interval
     """
     def __init__(self, nb_layers=2, width=100, **kwargs):
         super(Unconstrained, self).__init__()
@@ -110,6 +110,23 @@ class Unconstrained(MarginalUtility):
     def forward(self, x):
         self.output = self.linears(x)
         return(self.output)
+
+class Selector(MarginalUtility):
+    def __init__(self, module1, module2):
+        super(Selector, self).__init__()
+        self.preswitch = nn.Parameter(torch.zeros(1))
+        self.mod1 = module1
+        self.mod2 = module2
+
+    def forward(self, x):
+        switch = torch.sigmoid(self.preswitch)
+        return(switch*self.mod1(x) + (1-switch)*self.mod2(x))
+
+class MonotonicSelector(Selector):
+    def __init__(self, nb_sigmoids=100.):
+        ND = NonDecreasing(nb_sigmoids)
+        NI = NonIncreasing(nb_sigmoids)
+        super(MonotonicSelector, self).__init__(ND, NI)
 
 class MarginalUtilitiesLayer(nn.ModuleList):
     """
