@@ -154,14 +154,44 @@ class CI01FromAntichain(nn.Module):
     def __init__(self, antichain, dimension):
         super(CI01FromAntichain, self).__init__()
         self.dim = dimension
-        self.antichain = antichain
+        self.antichain = [torch.tensor(c) for c in antichain]
+        self.set_shapley_values_global() #can be computed easily.
         self.output = 0.
+
+    def set_shapley_values_global(self):
+        # can probably be made more general
+        # works ONLY for the pre-designed patterns from CI3addFrom01
+        shape_ac = [len(a) for a in self.antichain]
+        shaps = torch.zeros(self.dim)
+        if len(shape_ac)==1:
+            shaps[self.antichain[0]] = 1.
+        elif (shape_ac==[1,1]) or (shape_ac==[1,1,1]):
+            shaps[torch.cat(self.antichain)] = 1.
+        elif (shape_ac==[1,2]):
+            shaps[self.antichain[0]] = 2.
+            shaps[self.antichain[1]] = 0.5
+        elif (shape_ac==[2,2]):
+            shaps[self.antichain[0]] += 0.5
+            shaps[self.antichain[1]] += 0.5
+            shaps = torch.where(shaps>0.75, 2., shaps)
+        else:
+            raise ValueError("Invalid antichain, may be handled in a later version")
+        self.global_shapley_values = (shaps/sum(shaps))
+
+    def get_indices_to_propagate(self, x):
+        # should be made to return all indices in case of equality, not just one
+        get_mins = torch.cat([group[torch.argmin(x[:,group], dim=1).unsqueeze(1)] for group in self.antichain], dim=1)
+        get_max = torch.gather(get_mins, 1, torch.argmax(torch.gather(x, 1, get_mins), dim=1).unsqueeze(1))
+        return(get_max)
 
     def forward(self, x):
         self.input = x
-        get_mins = torch.cat([torch.min(x[:,group], dim=1).values.unsqueeze(1) for group in self.antichain], dim=1)
-        self.output = torch.max(get_mins, dim=1).values.unsqueeze(1)
+        get_indices = self.get_indices_to_propagate(x)
+        self.output = torch.gather(x, 1, get_indices)
         return(self.output)
+
+    def shapley_values_global(self):
+        return(self.global_shapley_values)
 
 class CI3addFrom01(nn.Module):
     # could be optimized through tensor manipulation
@@ -172,10 +202,10 @@ class CI3addFrom01(nn.Module):
         all_triples = itertools.combinations(range(self.dim), 3)
         self.zero_one_CIs = torch.nn.ModuleList({})
         for i in range(self.dim):
-            self.zero_one_CIs.append(CI01FromAntichain(((i,),)), self.dim)
+            self.zero_one_CIs.append(CI01FromAntichain(((i,),), self.dim))
         for i,j in all_doubles:
-            self.zero_one_CIs.append(CI01FromAntichain(((i,j),)), self.dim)
-            self.zero_one_CIs.append(CI01FromAntichain(((i,),(j,))), self.dim)
+            self.zero_one_CIs.append(CI01FromAntichain(((i,j),), self.dim))
+            self.zero_one_CIs.append(CI01FromAntichain(((i,),(j,)), self.dim))
         for i,j,k in all_triples:
             ac = [
                 ((i,j,k),),
@@ -188,8 +218,9 @@ class CI3addFrom01(nn.Module):
                 ((i,j),(i,k)),
             ]
             for a in ac:
-                self.zero_one_CIs.append(CI01FromAntichain(a), self.dim)
+                self.zero_one_CIs.append(CI01FromAntichain(a, self.dim))
         self.preweight = nn.Parameter(torch.randn((1,len(self.zero_one_CIs))))
+        self.update_weight()
 
     def update_weight(self):
         self.weight = F.softmax(self.preweight, dim=1)
@@ -202,3 +233,7 @@ class CI3addFrom01(nn.Module):
         self.update_weight()
         self.output = F.linear(x_completed, self.weight)
         return(self.output)
+
+    def get_shapley_values_global(self):
+        shaps_01 = torch.stack([m.shapley_values_global() for m in self.zero_one_CIs])
+        return(self.weight@shaps_01)
