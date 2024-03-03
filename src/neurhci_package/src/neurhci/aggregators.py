@@ -178,16 +178,10 @@ class CI01FromAntichain(nn.Module):
             raise ValueError("Invalid antichain, may be handled in a later version")
         self.global_shapley_values = (shaps/sum(shaps))
 
-    def get_indices_to_propagate(self, x):
-        # should be made to return all indices in case of equality, not just one
-        get_mins = torch.cat([group[torch.argmin(x[:,group], dim=1).unsqueeze(1)] for group in self.antichain], dim=1)
-        get_max = torch.gather(get_mins, 1, torch.argmax(torch.gather(x, 1, get_mins), dim=1).unsqueeze(1))
-        return(get_max)
-
     def forward(self, x):
         self.input = x
-        get_indices = self.get_indices_to_propagate(x)
-        self.output = torch.gather(x, 1, get_indices)
+        get_mins = torch.cat([torch.min(x[:,group], dim=1).values.unsqueeze(1) for group in self.antichain], dim=1)
+        self.output = torch.max(get_mins, dim=1).values.unsqueeze(1)
         return(self.output)
 
     def shapley_values_global(self):
