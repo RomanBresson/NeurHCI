@@ -66,7 +66,7 @@ The classes detailed here, module by module, either inherit from PyTorch's ``nn.
   * ``MarginalUtilitiesLayer(list_of_leaves, types_of_leaves, nb_sigmoids)``: a list of marginal utilities ${u_1,...,u_n}$ where $u_i$ corresponds to ``list_of_leaves[i]`` and has type ``types_of_leaves[list_of_leaves[i]]``. Any non-given type will be replaced by an ``Identity``.
 * ``aggregators``: classes implementing Choquet integral-based aggregators:
   * ``CI2Add``: The $2$-additive Choquet integral, with ``dimension`` inputs.
-  * ``CI01FromAntichain``: A CI parameterized by a 0-1 FM. Nothing learnable, the FM is determined by its corresponding antichain (see thesis).
+  * ``CI01FromAntichain``: A CI parameterized by a 0-1 FM. Nothing learnable, the FM is determined by its corresponding antichain (see thesis). WARNING: should only be used with the antichains defined in ``CI3addFrom01`` since the Shapley values computations only handle them at the moment.
   * ``CI3addFrom01``: A subset of the 3-additive CIs, represented as a convex sum of CIs parameterized by 3-additive 0-1 FMs (see thesis).
 * ``hierarchical``: class of hierarchical Choquet integral, i.e. a multi-step aggregator which aggregates the inputs successively following a directed-acyclic graph structure. Contains the following classes:
   * ``HCI(hierarchy)``: builds a HCI with the structure passed as argument. ``hierarchy`` is a dict of {(int) key: (list of int) value} where key is the id of a node, and value is the list of this node's children. Details and examples can be found below.
