@@ -113,28 +113,27 @@ class HCI(nn.Module):
             Computes the Winter values (i.e. the average contribution of each leaf to the output).
             This is a generalization of the Shapley value on games with a coalition structure (represented
             in our case by the hierarchy).
-
-            The subgraph yielded by the starting node's descendants must be a tree.
         """
         if starting_node is None:
             assert len(self.roots)==1, "Ambiguous node for which to compute the Shapley values."
             starting_node = self.roots[0]
         if starting_node in self.leaves:
             return({starting_node: torch.tensor(1.)})
+        descendents = self.get_descendents(starting_node)
+        relevant_parents = {d:[k for k in self.parents[d] if k in descendents] for d in descendents}
+        shapley_values = {d:self.CIs[str(d)].shapley_values_global() for d in descendents if d in self.hierarchy}
         next_to_treat = [starting_node]
-        shapley_values = {}
-        global_winter_values = {starting_node: 1.}
-        seen_nodes = [starting_node]
+        global_winter_values = {d: 0. for d in descendents}
+        global_winter_values[starting_node] = 1.
+        parents_treated = [starting_node]
         while next_to_treat:
             current = next_to_treat.pop(0)
-            shapley_values[current] = self.CIs[str(current)].shapley_values_global()
+            parents_treated.append(current)
             for child,shap in zip(self.hierarchy[current], shapley_values[current]):
-                global_winter_values[child] = global_winter_values[current]*shap
-                if child in seen_nodes:
-                    raise ValueError(f"The subgraph yielded by the starting node's descendants must be a tree. {current} has at least two parents in this tree.")
-                seen_nodes.append(child)                
-                if child not in self.leaves:
-                    next_to_treat.append(child)
+                global_winter_values[child] += global_winter_values[current]*shap
+                if all([k in parents_treated for k in relevant_parents[child]]):
+                    if child not in self.leaves:
+                        next_to_treat.append(child)
         return(global_winter_values)
 
     def path_to_descendent_tree(self, ancestor, descendent):
@@ -152,22 +151,27 @@ class HCI(nn.Module):
             path.append(curr_node)
         return(path[::-1])
 
-    def get_leaves(self, node):
+    def get_descendents(self, node):
         """
             Returns all leaves that are descendent of "node"
         """
         next_to_treat = [node]
         treated = []
-        leaves = set()
         while next_to_treat:
             current_node = next_to_treat.pop(0)
             if current_node in treated: #in case of a non-tree DAG
                 continue
             treated.append(current_node)
-            if current_node in self.leaves:
-                leaves.add(current_node)
-            else:
+            if current_node in self.hierarchy:
                 next_to_treat += self.hierarchy[current_node]
+        return(treated)
+
+    def get_leaves(self, node):
+        """
+            Returns all leaves that are descendent of "node"
+        """
+        descendents = self.get_descendents(node)
+        leaves = set([d for d in descendents if d in self.leaves])
         return(leaves)
 
     def siblings_node(self, node):
