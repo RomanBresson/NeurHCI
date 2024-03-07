@@ -293,10 +293,11 @@ class HCIBalanced(HCI):
         A tree-HCI with a single root and where all aggregators have the same number of leaves 
         (except the last one at each level)
     """
-    def __init__(self, dimension, children_by_aggregators):
+    def __init__(self, dimension, children_by_aggregators, nb_roots=1):
         """
             dimension: number of leaves
             children_by_aggregators: the number of leaves for each CI
+            nb_roots: all roots will be connected to the highest intermediate layer
         """
         current_layer = []
         next_layer = list(range(dimension))
@@ -308,8 +309,10 @@ class HCIBalanced(HCI):
             next_layer = []
             to_split = len(current_layer)
             next_layer_size = to_split//children_by_aggregators + ((to_split%children_by_aggregators)!=0)
-            if next_layer_size==1:
-                hierarchy[-1] = current_layer
+            if len(current_layer)<=children_by_aggregators:
+                roots = list(range(-nb_roots, 0))
+                for r in roots:
+                    hierarchy[r] = current_layer
                 break
             reverse = 2*(lay_i%2)-1 #we alternate direction to avoid the last node always being in a small aggregator
             starting_index = max(current_layer)+1
