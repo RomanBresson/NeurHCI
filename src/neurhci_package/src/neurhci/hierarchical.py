@@ -276,7 +276,7 @@ class HCI2layers(HCI):
         Each node in the intermediate layer has the same number of leaves (except the last one)
         The root aggregates all intermediate nodes
     """
-    def __init__(self, dimension, children_by_aggregators):
+    def __init__(self, dimension, children_by_aggregators, nb_roots=1):
         """
             dimension: number of leaves
             children_by_aggregators: the number of leaves for each CI
@@ -285,7 +285,9 @@ class HCI2layers(HCI):
         starting_index_aggs = dimension
         hierarchy = {starting_index_aggs+agg:list(range(agg*children_by_aggregators,min((agg+1)*children_by_aggregators, dimension))) 
                      for agg in range(nb_intermediate_nodes)}
-        hierarchy[-1] = list(hierarchy.keys())
+        last_lay =list(hierarchy.keys())
+        for i in range(1,nb_roots+1):
+            hierarchy[-i] = last_lay
         super(HCI2layers, self).__init__(hierarchy)
 
 class HCIBalanced(HCI):
