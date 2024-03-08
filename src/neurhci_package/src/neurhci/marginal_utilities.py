@@ -80,14 +80,14 @@ class NonDecreasing(MarginalUtility):
         self.weight = F.softmax(self.preweight, dim=-1)
         x = x-self.bias
         x = self.precision*x
-        x = F.sigmoid(x)
+        x = torch.sigmoid(x)
         x = x@self.weight.T
         self.output = x
         return(self.output)
 
 class NonIncreasing(NonDecreasing):
-    def __init__(self, nb_sigmoids=100):
-        super(NonIncreasing, self).__init__(nb_sigmoids)
+    def __init__(self, nb_sigmoids=100, centered=False):
+        super(NonIncreasing, self).__init__(nb_sigmoids, centered)
     
     def forward(self, x):
         x = super(NonIncreasing, self).forward(x)
