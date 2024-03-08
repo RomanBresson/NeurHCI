@@ -123,29 +123,33 @@ class Selector(MarginalUtility):
         return(switch*self.mod1(x) + (1-switch)*self.mod2(x))
 
 class MonotonicSelector(Selector):
-    def __init__(self, nb_sigmoids=100.):
-        ND = NonDecreasing(nb_sigmoids)
-        NI = NonIncreasing(nb_sigmoids)
+    def __init__(self, nb_sigmoids=100., centered=False):
+        ND = NonDecreasing(nb_sigmoids, centered=centered)
+        NI = NonIncreasing(nb_sigmoids, centered=centered)
         super(MonotonicSelector, self).__init__(ND, NI)
 
 class MarginalUtilitiesLayer(nn.ModuleList):
     """
         A list of marginal utilities.
     """
-    def __init__(self, list_of_leaves, types_of_leaves, nb_sigmoids=0.):
+    def __init__(self, list_of_leaves=None, types_of_leaves=None, nb_sigmoids=0.):
         """
-            list_of_leaves: a list of the integer ids of all the leaves.
+            list_of_leaves: a list of the integer ids of all the leaves, alternatively a list of marginal utilities.
             types_of_leaves: the type of each leaf, as a dictionary {leaf id: type}.
                                 Any unspecified type will be set to Identity.
             nb_sigmoids: the number of sigmoids to be used in the marginal utilities that require it.
         """
-        super(MarginalUtilitiesLayer, self).__init__()
-        if types_of_leaves is None:
-            types_of_leaves = {}
-        for l in list_of_leaves:
-            if l not in types_of_leaves:
-                types_of_leaves[l] = Identity
-            self.append(types_of_leaves[l](nb_sigmoids=nb_sigmoids))
+        if not list_of_leaves:
+            super(MarginalUtilitiesLayer, self).__init__([])
+        elif isinstance(list_of_leaves[0], MarginalUtility):
+            super(MarginalUtilitiesLayer, self).__init__(list_of_leaves)
+        else:
+            if types_of_leaves is None:
+                types_of_leaves = {}
+            for l in list_of_leaves:
+                if l not in types_of_leaves:
+                    types_of_leaves[l] = Identity
+                self.append(types_of_leaves[l](nb_sigmoids=nb_sigmoids))
 
     def forward(self, x):
         x = torch.cat([ui(x[:,i:i+1]) for i,ui in enumerate(self)], axis=-1)
