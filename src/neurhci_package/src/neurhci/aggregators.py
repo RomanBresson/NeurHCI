@@ -21,7 +21,7 @@ class Aggregator(nn.Module):
             Computes the Shapley values for the ith input feature for explaining the difference between two inputs.
         """
         with torch.no_grad():
-            shap = torch.zeros(x.shape[0], 1)
+            shap = torch.zeros(x.shape[0], 1).to(x.device)
             divisor = 0.
             for pos_in_permutation in range(self.dim):
                 #We do not explicitely use all permutations, sice many are equivalent for our purpose.
@@ -118,7 +118,7 @@ class CI2Add(Aggregator):
         self.update_weight()
         with torch.no_grad():
             w = self.weight[0]
-            mobius = torch.zeros(self.dim*(self.dim+1)//2)
+            mobius = torch.zeros(self.dim*(self.dim+1)//2).to(self.weight.device)
             mobius[:self.dim] += w[:self.dim]
             current_element = self.dim
             for i in range(self.dim):
@@ -137,7 +137,7 @@ class CI2Add(Aggregator):
         """
         with torch.no_grad():
             w = self.weight[0]
-            shapley = torch.zeros(self.dim)
+            shapley = torch.zeros(self.dim).to(self.weight.device)
             shapley[:self.dim] += w[:self.dim]
             current_node = self.dim
             for i in range(self.dim):
